@@ -19,7 +19,7 @@ public class PhysicTest : MonoBehaviour
     {
         if(!useFixedUpdate) body.AddForce(Vector3.forward * force);
 
-        Debug.Log("Fixed:" + useFixedUpdate + "," + body.velocity);
+        //Debug.Log("Fixed:" + useFixedUpdate + "," + body.velocity);
     }
 
     void FixedUpdate()

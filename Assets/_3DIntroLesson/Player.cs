@@ -5,8 +5,10 @@ using UnityEngine.AI;
 
 public enum MoveType { WASD, MouseClick }
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, ICameraFollowable
 {
+    public CameraFollow cameraFollow { get; set; }
+
     public MoveType moveType;
     public int loopCount = 100;
     public float moveSpeed = 6;
@@ -61,7 +63,7 @@ public class Player : MonoBehaviour
         if (moveType == MoveType.WASD)
         {
             Move();
-            Turning();
+            //Turning();
         }
 
         if(Input.GetMouseButton(0))
@@ -128,11 +130,15 @@ public class Player : MonoBehaviour
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        Vector3 cam_forward = Vector3.Scale(Camera.main.transform.forward, xzPlaneVec).normalized;
+        //Vector3 cam_forward = Vector3.Scale(Camera.main.transform.forward, xzPlaneVec).normalized;
+
+        Vector3 cam_forward = cameraFollow.transform.forward;
         Vector3 cam_right = Camera.main.transform.right;
         movement = (cam_forward * v + cam_right * h).normalized;
 
         body.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
+
+        body.MoveRotation(Quaternion.LookRotation(cam_forward));
     }
 
     void Turning(bool useRigidBody = true)

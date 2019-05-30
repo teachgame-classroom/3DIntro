@@ -50,6 +50,7 @@ public class NavTest : MonoBehaviour
     {
         anim.SetTrigger("Dead");
         nav.isStopped = true;
+        GameController.OnEnemyKilled();
     }
 
     void StartSinking()
