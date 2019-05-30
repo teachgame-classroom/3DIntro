@@ -14,7 +14,9 @@ public class CameraFollow : MonoBehaviour
     public float mouseSensitivity_X = 10;
     public float mouseSensitivity_Y = 2;
 
-    private Transform rig;
+    private Transform armX;
+    private Transform armY;
+    private Transform armZ;
     private Transform camTrans;
     private Camera cam;
 
@@ -30,9 +32,11 @@ public class CameraFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rig = transform.Find("Rig");
-        camTrans = rig.Find("Main Camera");
-        cam = camTrans.GetComponent<Camera>();
+        armX = transform.Find("Rig_ArmX");
+        armY = armX.Find("Rig_ArmY");
+        armZ = armY.Find("Rig_ArmZ");
+        cam = GetComponentInChildren<Camera>();
+        camTrans = cam.transform;
 
         SetFollowTarget(followTarget);
     }
@@ -67,17 +71,17 @@ public class CameraFollow : MonoBehaviour
         if(!lookAt)
         {
             MoveCameraByMouse();
+            camTrans.localRotation = Quaternion.Lerp(camTrans.localRotation, targetRotPitch, smooth * Time.deltaTime);
+            armX.localRotation = Quaternion.Lerp(armX.localRotation, targetRotYaw, smooth * Time.deltaTime);
         }
         else
         {
             LookAt(lookAtTarget);
+            //camTrans.rotation = Quaternion.Lerp(camTrans.rotation, targetRotPitch, smooth * Time.deltaTime);
         }
-
 
         transform.position = Vector3.Lerp(transform.position, followTarget.position, smooth * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotYaw_root, smooth * Time.deltaTime);
-        rig.localRotation = Quaternion.Lerp(rig.localRotation, targetRotYaw, smooth * Time.deltaTime);
-        camTrans.localRotation = Quaternion.Lerp(camTrans.localRotation, targetRotPitch, smooth * Time.deltaTime);
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fov, smooth * Time.deltaTime);
     }
 
@@ -128,8 +132,10 @@ public class CameraFollow : MonoBehaviour
         Quaternion lookRotationYaw = Quaternion.LookRotation(lookDirection_Yaw);
         Quaternion lookRotationPitch = Quaternion.LookRotation(lookDirection_Pitch);
 
+        Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
+
         targetRotYaw_root = lookRotationYaw;
-        targetRotPitch = lookRotationPitch;
+        targetRotPitch = lookRotation;
 
         SetYawAngle(0);
 
